@@ -11,13 +11,13 @@
     <div class="brand">
         <img src="Media/Логотип.png" alt="Логотип Мечел">
     </div>
-    <!-- Fixed burger button ("бутерброд") -->
+
     <button class="burger" aria-label="Открыть меню" aria-controls="sideMenu" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
   </header>
 
-  <!-- Slide-in navigation panel -->
+
   <nav id="sideMenu" class="side-menu" aria-hidden="true">
     <ul>
       <li><a href="index.html">О компании</a></li>
@@ -69,13 +69,13 @@
   <button id="toTop" title="Наверх">↑</button>
 
   <script>
-    /* Scroll to top smooth */
+
     const btn = document.getElementById('toTop');
     btn.addEventListener('click', () => {
       window.scrollTo({top:0, behavior:'smooth'});
     });
 
-    /* Show/Hide button on scroll */
+
     const toggleVisibility = () => {
       if(window.scrollY > 400){
         btn.classList.remove('hide');
@@ -86,7 +86,7 @@
     toggleVisibility();
     window.addEventListener('scroll', toggleVisibility);
 
-    /* Burger-menu logic */
+
     const burger   = document.querySelector('.burger');
     const sideMenu = document.getElementById('sideMenu');
     const overlay  = document.getElementById('overlay');
@@ -100,7 +100,7 @@
       sideMenu.setAttribute('aria-hidden', !menuOpened);
     });
 
-    /* Close menu when a link is clicked */
+
     sideMenu.addEventListener('click', e => {
       if(e.target.tagName === 'A'){
         sideMenu.classList.remove('open');
@@ -112,7 +112,7 @@
       }
     });
 
-    /* Click on backdrop closes the menu */
+
     overlay.addEventListener('click', () => {
       sideMenu.classList.remove('open');
       burger.classList.remove('open');
@@ -122,7 +122,7 @@
       sideMenu.setAttribute('aria-hidden', 'true');
     });
   </script>
-  <!-- semi-transparent backdrop -->
+
   <div id="overlay" class="overlay"></div>
 </body>
 </html>

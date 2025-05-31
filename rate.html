@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Курс валют</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="main.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <meta charset="UTF-8" />
+  <title>Курс СДР / Рубль</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
 </head>
+
 <body id="top">
   <header>
     <div class="brand">
-      <img src="Media/Логотип.png" alt="Логотип Мечел">
+      <img src="Media/Логотип.png" alt="Логотип Мечел" />
     </div>
     <button class="burger" aria-label="Открыть меню" aria-controls="sideMenu" aria-expanded="false">
       <span></span><span></span><span></span>
@@ -28,7 +29,7 @@
   </nav>
 
   <main>
-    <section id="rates" class="rates-section">
+    <section class="rates-section">
       <h2>Курс СДР (XDR) / Российский рубль</h2>
 
       <div class="converter">
@@ -53,20 +54,24 @@
   </main>
 
   <footer>© 2025 ПАО «Мечел». Все права защищены.</footer>
-
   <button id="toTop" title="Наверх">↑</button>
+  <div id="overlay" class="overlay"></div>
 
   <script>
+  (function () {
     const btn = document.getElementById('toTop');
-    btn.addEventListener('click', () => window.scrollTo({top:0,behavior:'smooth'}));
-    const toggleTop = () => window.scrollY > 400 ? btn.classList.remove('hide')
-                                                : btn.classList.add('hide');
+    btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    const toggleTop = () => window.scrollY > 400 ? btn.classList.remove('hide') : btn.classList.add('hide');
     toggleTop(); window.addEventListener('scroll', toggleTop);
 
     const burger = document.querySelector('.burger');
     const side   = document.getElementById('sideMenu');
     const ovl    = document.getElementById('overlay');
-
+    const closeMenu = () => {
+      side.classList.remove('open'); burger.classList.remove('open');
+      ovl.classList.remove('show');  document.body.style.overflow = '';
+      burger.setAttribute('aria-expanded', 'false'); side.setAttribute('aria-hidden', 'true');
+    };
     burger.addEventListener('click', () => {
       const open = side.classList.toggle('open');
       burger.classList.toggle('open', open);
@@ -75,89 +80,98 @@
       burger.setAttribute('aria-expanded', open);
       side.setAttribute('aria-hidden', !open);
     });
-    side.addEventListener('click', e=>{
-      if(e.target.tagName==='A'){ closeMenu(); }
-    });
-    ovl.addEventListener('click', closeMenu);
-    function closeMenu(){
-      side.classList.remove('open'); burger.classList.remove('open');
-      ovl.classList.remove('show'); document.body.style.overflow='';
-      burger.setAttribute('aria-expanded','false'); side.setAttribute('aria-hidden','true');
-    }
+    side.addEventListener('click', e => { if (e.target.tagName === 'A') closeMenu(); });
+    ovl.addEventListener('click',   closeMenu);
 
-    /* ---------- Currency logic ---------- */
-    const rubInput = document.getElementById('rubInput');
-    const xdrInput = document.getElementById('xdrInput');
-    const rateInfo = document.getElementById('rateInfo');
-    let rate = 0;          // RUB за 1 XDR
+    const rubInput  = document.getElementById('rubInput');
+    const xdrInput  = document.getElementById('xdrInput');
+    const rateInfo  = document.getElementById('rateInfo');
+    let   rate      = 0;          
 
-    // === 1. Сегодняшний курс ===
-    fetch('https://api.exchangerate.host/latest?base=XDR&symbols=RUB')
-      .then(r=>r.json())
-      .then(data=>{
-        rate = data.rates.RUB;
+    async function loadToday() {
+      try {
+        const res  = await fetch('https://www.cbr-xml-daily.ru/daily_json.js');
+        const data = await res.json();
+        const v    = data.Valute.XDR;              
+        rate       = v.Value / v.Nominal;          
         rateInfo.textContent = `Сегодня: 1 XDR = ${rate.toFixed(2)} ₽`;
         rubInput.value = rate.toFixed(2);
         xdrInput.value = 1;
-      })
-      .catch(()=> rateInfo.textContent='Не удалось загрузить курс.');
+      } catch (e) {
+        rateInfo.textContent = 'Не удалось загрузить курс.';
+      }
+    }
+    loadToday();
 
-    rubInput.addEventListener('input',()=>{
-      if(!rate) return;
+    rubInput.addEventListener('input', () => {
+      if (!rate) return;
       const rub = parseFloat(rubInput.value);
-      xdrInput.value = rub ? (rub/rate).toFixed(4) : '';
+      xdrInput.value = rub ? (rub / rate).toFixed(4) : '';
     });
-    xdrInput.addEventListener('input',()=>{
-      if(!rate) return;
+    xdrInput.addEventListener('input', () => {
+      if (!rate) return;
       const xdr = parseFloat(xdrInput.value);
-      rubInput.value = xdr ? (xdr*rate).toFixed(2) : '';
+      rubInput.value = xdr ? (xdr * rate).toFixed(2) : '';
     });
 
-    /* === 2. История за 31 день === */
-    const ctx = document.getElementById('rateChart');
-    const today = new Date();
-    const from  = new Date(today.getTime() - 30*86400000); // 30 дней назад
+    async function loadHistory() {
+      const today = new Date();
+      const promises = [];
+      for (let i = 30; i >= 0; i--) {
+        const d  = new Date(today.getTime() - i * 86400000);
+        const y  = d.getFullYear();
+        const m  = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        const url = `https://www.cbr-xml-daily.ru/archive/${y}/${m}/${dd}/daily_json.js`;
+        promises.push(fetch(url).then(r => r.ok ? r.json() : null).catch(() => null));
+      }
 
-    const fmt = d => d.toISOString().slice(0,10);           // YYYY-MM-DD
-    fetch(`https://api.exchangerate.host/timeseries?base=XDR&symbols=RUB&start_date=${fmt(from)}&end_date=${fmt(today)}`)
-      .then(r=>r.json())
-      .then(json=>{
-        const labels=[], values=[];
-        Object.keys(json.rates).sort().forEach(date=>{
-          const [y,m,d]=date.split('-');
-          labels.push(`${d}.${m}`);
-          values.push(json.rates[date].RUB);
+      try {
+        const jsons  = await Promise.all(promises);
+        const labels = [], values = [];
+        jsons.forEach((j, idx) => {
+          if (j && j.Valute && j.Valute.XDR) {
+            const d = new Date(today.getTime() - (30 - idx) * 86400000);
+            labels.push(`${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}`);
+            values.push(j.Valute.XDR.Value / j.Valute.XDR.Nominal);
+          }
         });
-        drawChart(labels, values);
-      })
-      .catch(()=> rateInfo.textContent += '  История недоступна.');
+        if (values.length) drawChart(labels, values);
+        else throw 0;
+      } catch {
+        rateInfo.textContent += ' История недоступна.';
+      }
+    }
+    loadHistory();
 
-    function drawChart(labels,values){
-      new Chart(ctx,{
-        type:'bar',
-        data:{labels,datasets:[{
-          label:'XDR → RUB',
-          data:values,
-          borderWidth:1,
-          backgroundColor:values.map(()=> 'rgba(0,150,255,0.6)')
-        }]},
-        options:{
-          responsive:true,
-          onClick:(evt,els,chart)=>{
-            if(!els.length) return;
-            const i=els[0].index;
-            chart.data.datasets[0].backgroundColor = chart.data.datasets[0].backgroundColor.map((c,idx)=>
-              idx===i?'rgba(0,115,230,0.9)':'rgba(0,150,255,0.6)');
+    function drawChart(labels, values) {
+      new Chart(document.getElementById('rateChart'), {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'XDR → RUB',
+            data: values,
+            borderWidth: 1,
+            backgroundColor: values.map(() => 'rgba(0,150,255,.6)')
+          }]
+        },
+        options: {
+          responsive: true,
+          onClick: (evt, els, chart) => {
+            if (!els.length) return;
+            const i = els[0].index;
+            chart.data.datasets[0].backgroundColor =
+              chart.data.datasets[0].backgroundColor.map((c, idx) =>
+                idx === i ? 'rgba(0,115,230,.9)' : 'rgba(0,150,255,.6)');
             chart.update();
             rateInfo.textContent = `${chart.data.labels[i]}: 1 XDR = ${values[i].toFixed(2)} ₽`;
           },
-          scales:{y:{beginAtZero:false}}
+          scales: { y: { beginAtZero: false } }
         }
       });
     }
+  })();
   </script>
-
-  <!-- semi-transparent backdrop -->
-  <div id="overlay" class="overlay"></div>
 </body>
 </html>

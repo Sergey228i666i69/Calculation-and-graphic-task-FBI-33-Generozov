@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="main.css">
 </head>
 <body id="top">
-  <!-- ===== Header ===== -->
+
   <header>
     <div class="brand">
       <img src="Media/Логотип.png" alt="Логотип Мечел">
@@ -18,7 +18,7 @@
     </button>
   </header>
 
-  <!-- ===== Side-panel ===== -->
+
   <nav id="sideMenu" class="side-menu" aria-hidden="true">
     <ul>
       <li><a href="index.html">О компании</a></li>
@@ -29,13 +29,12 @@
     </ul>
   </nav>
 
-  <!-- ===== Main content ===== -->
+
   <main>
     <section id="contacts">
       <h2>Контактные данные</h2>
 
       <div class="contacts-grid">
-        <!-- Контакты -->
         <div class="contact-card">
           <h3>Головной офис</h3>
           <ul>
@@ -58,9 +57,7 @@
           </ul>
         </div>
 
-        <!-- Карта -->
         <div class="map-container">
-          <!-- Центр и маркер на 55.796456 , 37.549705 (ул. Красноармейская, 1) -->
           <iframe
             src="https://maps.google.com/maps?q=55.796456,37.549705&amp;hl=ru&amp;z=16&amp;output=embed"
             allowfullscreen
@@ -72,15 +69,15 @@
     </section>
   </main>
 
-  <!-- ===== Footer ===== -->
+
   <footer>
     © 2025 ПАО «Мечел». Все права защищены.
   </footer>
 
-  <!-- Кнопка «Наверх» -->
+
   <button id="toTop" title="Наверх">↑</button>
 
-  <!-- ===== JavaScript ===== -->
+
   <script>
     /* Scroll-to-top */
     const btn = document.getElementById('toTop');
@@ -89,7 +86,7 @@
       window.scrollY > 400 ? btn.classList.remove('hide') : btn.classList.add('hide');
     toggleVisibility();  window.addEventListener('scroll', toggleVisibility);
 
-    /* Burger-menu */
+
     const burger   = document.querySelector('.burger');
     const sideMenu = document.getElementById('sideMenu');
     const overlay  = document.getElementById('overlay');
@@ -124,7 +121,7 @@
     });
   </script>
 
-  <!-- semi-transparent backdrop -->
+
   <div id="overlay" class="overlay"></div>
 </body>
 </html>
