@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Контактные данные</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../main.css">
+</head>
+<body id="top">
+  <!-- ===== Header ===== -->
+  <header>
+    <div class="brand">
+      <img src="Media/Логотип.png" alt="Логотип Мечел">
+    </div>
+    <button class="burger" aria-label="Открыть меню" aria-controls="sideMenu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <!-- ===== Side-panel ===== -->
+  <nav id="sideMenu" class="side-menu" aria-hidden="true">
+    <ul>
+      <li><a href="about.html">О компании</a></li>
+      <li><a href="news.html">Новости</a></li>
+      <li><a href="rate.html">Курс валют</a></li>
+      <li><a href="contacts.html">Контактные данные</a></li>
+      <li><a href="video.html">Видео</a></li>
+    </ul>
+  </nav>
+
+  <!-- ===== Main content ===== -->
+  <main>
+    <section id="contacts">
+      <h2>Контактные данные</h2>
+
+      <div class="contacts-grid">
+        <!-- Контакты -->
+        <div class="contact-card">
+          <h3>Головной офис</h3>
+          <ul>
+            <li><b>Адрес:</b> 125167, Москва, ул.&nbsp;Красноармейская, д.&nbsp;1</li>
+            <li><b>Телефон (приёмная):</b> +7&nbsp;(495)&nbsp;221-88-88</li>
+            <li><b>Факс:</b> +7&nbsp;(495)&nbsp;221-88-00</li>
+            <li><b>E-mail (общий):</b> <a href="mailto:mechel@mechel.com">mechel@mechel.com</a></li>
+          </ul>
+
+          <h3>Отдел продаж металлопроката</h3>
+          <ul>
+            <li><b>Телефон (бесплатно РФ):</b> 8-800-700-95-50</li>
+            <li><b>E-mail:</b> <a href="mailto:sales@mechelservice.ru">sales@mechelservice.ru</a></li>
+          </ul>
+
+          <h3>Часы работы</h3>
+          <ul>
+            <li>Пн–Пт: 09:00 – 18:00</li>
+            <li>Сб–Вс: выходной</li>
+          </ul>
+        </div>
+
+        <!-- Карта -->
+        <div class="map-container">
+          <!-- Центр и маркер на 55.796456 , 37.549705 (ул. Красноармейская, 1) -->
+          <iframe
+            src="https://maps.google.com/maps?q=55.796456,37.549705&amp;hl=ru&amp;z=16&amp;output=embed"
+            allowfullscreen
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer>
+    © 2025 ПАО «Мечел». Все права защищены.
+  </footer>
+
+  <!-- Кнопка «Наверх» -->
+  <button id="toTop" title="Наверх">↑</button>
+
+  <!-- ===== JavaScript ===== -->
+  <script>
+    /* Scroll-to-top */
+    const btn = document.getElementById('toTop');
+    btn.addEventListener('click', () => window.scrollTo({top:0,behavior:'smooth'}));
+    const toggleVisibility = () =>
+      window.scrollY > 400 ? btn.classList.remove('hide') : btn.classList.add('hide');
+    toggleVisibility();  window.addEventListener('scroll', toggleVisibility);
+
+    /* Burger-menu */
+    const burger   = document.querySelector('.burger');
+    const sideMenu = document.getElementById('sideMenu');
+    const overlay  = document.getElementById('overlay');
+
+    burger.addEventListener('click', () => {
+      const opened = sideMenu.classList.toggle('open');
+      burger.classList.toggle('open', opened);
+      overlay.classList.toggle('show', opened);
+      document.body.style.overflow = opened ? 'hidden' : '';
+      burger.setAttribute('aria-expanded', opened);
+      sideMenu.setAttribute('aria-hidden', !opened);
+    });
+
+    sideMenu.addEventListener('click', e => {
+      if(e.target.tagName === 'A'){
+        sideMenu.classList.remove('open');
+        burger.classList.remove('open');
+        overlay.classList.remove('show');
+        document.body.style.overflow = '';
+        burger.setAttribute('aria-expanded','false');
+        sideMenu.setAttribute('aria-hidden','true');
+      }
+    });
+
+    overlay.addEventListener('click', () => {
+      sideMenu.classList.remove('open');
+      burger.classList.remove('open');
+      overlay.classList.remove('show');
+      document.body.style.overflow = '';
+      burger.setAttribute('aria-expanded','false');
+      sideMenu.setAttribute('aria-hidden','true');
+    });
+  </script>
+
+  <!-- semi-transparent backdrop -->
+  <div id="overlay" class="overlay"></div>
+</body>
+</html>

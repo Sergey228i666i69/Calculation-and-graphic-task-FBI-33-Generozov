@@ -1,0 +1,392 @@
+/* =========================
+   Main stylesheet (main.css)
+   ========================= */
+
+/* ---------- Root variables ---------- */
+:root{
+  --accent:#0096ff;
+  --accent-dark:#0073e6;
+  --bg-light:#f5f7fa;
+  --text-dark:#1a1a1a;
+}
+
+/* базовая сетка и типографика */
+*{box-sizing:border-box;}
+
+body{
+  margin:0;
+  font-family:'Inter',Arial,sans-serif;
+  color:var(--text-dark);
+  background-color:var(--bg-light);
+  line-height:1.6;
+}
+
+/* ================= Header ================ */
+header{
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent-dark) 100%);
+  color:#fff;
+  padding:1.2rem 1.5rem;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:100;
+  box-shadow:0 4px 10px rgba(0,0,0,.2);
+}
+header img{height:48px;margin-right:.75rem;}
+
+.brand{
+  display:flex;
+  align-items:center;
+  font-size:1.3rem;
+  font-weight:600;
+  letter-spacing:.5px;
+}
+
+/* ссылки в «обычном» хедере (если появятся) */
+nav a{
+  color:#fff;
+  margin-left:1.25rem;
+  text-decoration:none;
+  font-weight:500;
+  position:relative;
+}
+nav a::after{
+  content:'';
+  position:absolute;
+  left:0; bottom:-4px;
+  width:0; height:2px;
+  background:#fff;
+  transition:width .3s ease;
+}
+nav a:hover::after{width:100%;}
+
+/* ================ Основной контент ================ */
+main{
+  max-width:1200px;
+  margin:0 auto;
+  padding:3rem 1rem;
+}
+
+section{
+  margin-bottom:4rem;
+  opacity:0;
+  transform:translateY(40px);
+  animation:fadeInUp .6s forwards;
+}
+section:nth-child(odd){animation-delay:.2s;}
+section:nth-child(even){animation-delay:.4s;}
+
+@keyframes fadeInUp{
+  to{opacity:1;transform:none;}
+}
+
+h2{
+  font-size:2rem;
+  margin-bottom:1rem;
+  color:var(--accent-dark);
+}
+
+/* сетка-контейнер */
+.grid{display:grid;gap:1.5rem;}
+@media(min-width:768px){
+  .grid-2{grid-template-columns:repeat(2,1fr);align-items:center;}
+}
+
+/* универсальное фото */
+.photo{
+  width:100%;
+  border-radius:12px;
+  box-shadow:0 6px 14px rgba(0,0,0,.15);
+}
+
+ul,ol{padding-left:1.25rem;}
+li{margin-bottom:.5rem;font-weight:500;}
+
+/* ================ Кнопка «Наверх» ================ */
+#toTop{
+  position:fixed;
+  right:1.5rem;
+  bottom:1.5rem;
+  width:56px;
+  height:56px;
+  border-radius:50%;
+  border:none;
+  background:var(--accent);
+  color:#fff;
+  font-size:1.5rem;
+  cursor:pointer;
+  box-shadow:0 4px 10px rgba(0,0,0,.3);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:background .3s,transform .2s;
+  z-index:1000;
+}
+#toTop:hover{background:var(--accent-dark);transform:translateY(-4px);}
+#toTop.hide{opacity:0;pointer-events:none;}
+
+/* ================ Подвал ================ */
+footer{
+  text-align:center;
+  padding:2rem 1rem;
+  background:#fff;
+  color:#777;
+  font-size:.9rem;
+}
+section p{text-align:justify;}
+
+/* --------------------------------------------------
+           Burger-menu  &  Side-panel
+-------------------------------------------------- */
+
+/* Кнопка-«бургер» */
+.burger{
+  position:fixed;
+  top:1rem;
+  right:1rem;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  width:32px;
+  height:24px;
+  background:transparent;
+  border:none;
+  padding:0;
+  cursor:pointer;
+  z-index:1100;
+}
+.burger span{
+  display:block;
+  width:100%;
+  height:3px;
+  background:#fff;
+  border-radius:2px;
+  transition:transform .3s ease,opacity .3s ease;
+}
+.burger.open span:nth-child(1){
+  transform:translateY(10px) rotate(45deg);
+}
+.burger.open span:nth-child(2){opacity:0;}
+.burger.open span:nth-child(3){
+  transform:translateY(-10px) rotate(-45deg);
+}
+
+/* Боковая панель */
+.side-menu{
+  position:fixed;
+  top:0;
+  right:0;
+  height:100vh;
+  width:280px;
+  background:#fff;
+  box-shadow:-4px 0 16px rgba(0,0,0,.1);
+  padding:4rem 2rem;
+  transform:translateX(100%);
+  transition:transform .4s cubic-bezier(.4,0,.2,1);
+  z-index:1050;
+  display:flex;
+  flex-direction:column;
+}
+.side-menu.open{transform:translateX(0);}
+
+.side-menu ul{list-style:none;margin:0;padding:0;}
+.side-menu li{margin-bottom:1.5rem;}
+.side-menu a{
+  font-size:1.125rem;
+  font-weight:600;
+  color:var(--text-dark);
+  text-decoration:none;
+  transition:color .2s;
+}
+.side-menu a:hover,
+.side-menu a.active{color:var(--accent);}
+
+/* Оверлей */
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  opacity:0;
+  visibility:hidden;
+  transition:opacity .3s ease;
+  z-index:1040;
+}
+.overlay.show{
+  opacity:1;
+  visibility:visible;
+}
+
+/* гарантируем, что градиент хедера остаётся под бургером */
+header{z-index:100;}
+
+/* --------------------------------------------------
+               Карточки новостей
+-------------------------------------------------- */
+.news-grid{
+  display:flex;
+  flex-direction:column;
+  gap:2.5rem;
+}
+
+.news-card{
+  display:grid;
+  grid-template-columns:1fr 200px;
+  gap:1rem 2rem;
+  padding:1.75rem;
+  background:#fff;
+  border-radius:16px;
+  box-shadow:0 6px 14px rgba(0,0,0,.12);
+  transition:transform .25s ease,box-shadow .25s ease;
+}
+.news-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 8px 18px rgba(0,0,0,.15);
+}
+
+.news-card .photo{
+  grid-column:2;
+  grid-row:1 / span 3;
+  align-self:stretch;
+  width:200px;
+  height:100%;
+  object-fit:cover;
+  border-radius:12px;
+  box-shadow:0 2px 6px rgba(0,0,0,.10);
+}
+
+.news-title{
+  grid-column:1;
+  grid-row:1;
+  margin:0 0 .25rem;
+  font-size:1.25rem;
+  font-weight:700;
+}
+.news-date{
+  grid-column:1;
+  grid-row:2;
+  margin:0 0 .75rem;
+  font-size:.95rem;
+  font-weight:600;
+  color:var(--accent-dark);
+}
+.news-snippet{
+  grid-column:1;
+  grid-row:3;
+  margin:0;
+}
+
+.toggle-btn{display:none!important;}
+.full-text{display:none;}
+
+@media(max-width:560px){
+  .news-card{
+    grid-template-columns:1fr;
+    gap:1rem;
+  }
+  .news-card .photo{
+    grid-column:1;
+    grid-row:4;
+    width:100%;
+    height:200px;
+    margin-top:1rem;
+  }
+}
+
+/* --------------------------------------------------
+               Video page
+-------------------------------------------------- */
+.video-section{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.video-container{
+  position:relative;
+  width:100%;
+  max-width:960px;
+  padding-bottom:56.25%; /* 16:9 */
+  height:0;
+  overflow:hidden;
+  border-radius:12px;
+  box-shadow:0 6px 14px rgba(0,0,0,.15);
+}
+.video-container iframe{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  border:0;
+}
+
+.video-caption{
+  margin-top:1rem;
+  font-style:italic;
+  text-align:center;
+  color:#555;
+}
+
+/* --------------------------------------------------
+               Contacts page
+-------------------------------------------------- */
+.contacts-grid{
+  display:grid;
+  gap:2rem;
+  align-items:stretch;        /* оба блока одинаковой высоты */
+}
+@media(min-width:768px){
+  .contacts-grid{grid-template-columns:1fr 1fr;}
+}
+
+.contact-card{
+  background:#fff;
+  padding:2rem 1.75rem;
+  border-radius:16px;
+  box-shadow:0 6px 14px rgba(0,0,0,.12);
+}
+
+.contact-card h3{
+  margin-top:0;
+  margin-bottom:1rem;
+  font-size:1.25rem;
+  color:var(--accent-dark);
+}
+
+.contact-card ul{
+  list-style:none;
+  margin:0;
+  padding:0;
+}
+.contact-card li{
+  margin-bottom:.75rem;
+  font-weight:500;
+}
+
+.map-container{
+  position:relative;
+  width:100%;
+  height:100%;            /* равняемся по высоте контактного блока */
+  padding-bottom:0;       /* убираем трюк 16:9 */
+  overflow:hidden;
+  border-radius:12px;
+  box-shadow:0 6px 14px rgba(0,0,0,.15);
+}
+.map-container iframe{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  border:0;
+}
+
+/* На мобильных возвращаем соотношение 16:9,
+   чтобы карта не стала слишком высокой */
+@media(max-width:767px){
+  .map-container{
+    height:auto;
+    padding-bottom:56.25%;
+  }
+  .map-container iframe{height:100%;}
+}

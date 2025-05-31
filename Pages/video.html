@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Видео</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- подключаем общий стиль -->
+  <link rel="stylesheet" href="../main.css">
+</head>
+<body id="top">
+  <!-- ===== Header ===== -->
+  <header>
+    <div class="brand">
+      <img src="Media/Логотип.png" alt="Логотип Мечел">
+    </div>
+    <!-- Кнопка-«бургер» -->
+    <button class="burger" aria-label="Открыть меню" aria-controls="sideMenu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <!-- ===== Side-panel ===== -->
+  <nav id="sideMenu" class="side-menu" aria-hidden="true">
+    <ul>
+      <li><a href="about.html">О компании</a></li>
+      <li><a href="news.html">Новости</a></li>
+      <li><a href="rate.html">Курс валют</a></li>
+      <li><a href="contacts.html">Контактные данные</a></li>
+      <li><a href="video.html">Видео</a></li>
+    </ul>
+  </nav>
+
+  <!-- ===== Main content ===== -->
+  <main>
+    <section id="video" class="video-section">
+      <h2>Видео о компании «Мечел»</h2>
+
+      <div class="video-container">
+        <!-- Презентационный ролик о компании (YouTube) -->
+        <iframe
+          src="https://www.youtube.com/embed/-zhzS1qm5mc?rel=0"
+          title="Мечел — металлургия и добыча"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen>
+        </iframe>
+      </div>
+
+      <p class="video-caption">Краткий обзор деятельности ПАО «Мечел» и его производственных мощностей.</p>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer>
+    © 2025 ПАО «Мечел». Все права защищены.
+  </footer>
+
+  <!-- Кнопка «Наверх» -->
+  <button id="toTop" title="Наверх">↑</button>
+
+  <!-- ===== JavaScript ===== -->
+  <script>
+    /* Scroll to top smooth */
+    const btn = document.getElementById('toTop');
+    btn.addEventListener('click', () => {
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+
+    /* Show/Hide button on scroll */
+    const toggleVisibility = () => {
+      if(window.scrollY > 400){
+        btn.classList.remove('hide');
+      }else{
+        btn.classList.add('hide');
+      }
+    };
+    toggleVisibility();
+    window.addEventListener('scroll', toggleVisibility);
+
+    /* Burger-menu logic */
+    const burger   = document.querySelector('.burger');
+    const sideMenu = document.getElementById('sideMenu');
+    const overlay  = document.getElementById('overlay');
+
+    burger.addEventListener('click', () => {
+      const menuOpened = sideMenu.classList.toggle('open');
+      burger.classList.toggle('open', menuOpened);
+      overlay.classList.toggle('show', menuOpened);
+      document.body.style.overflow = menuOpened ? 'hidden' : '';
+      burger.setAttribute('aria-expanded', menuOpened);
+      sideMenu.setAttribute('aria-hidden', !menuOpened);
+    });
+
+    /* Close menu when a link is clicked */
+    sideMenu.addEventListener('click', e => {
+      if(e.target.tagName === 'A'){
+        sideMenu.classList.remove('open');
+        burger.classList.remove('open');
+        overlay.classList.remove('show');
+        document.body.style.overflow = '';
+        burger.setAttribute('aria-expanded', 'false');
+        sideMenu.setAttribute('aria-hidden', 'true');
+      }
+    });
+
+    /* Click on backdrop closes the menu */
+    overlay.addEventListener('click', () => {
+      sideMenu.classList.remove('open');
+      burger.classList.remove('open');
+      overlay.classList.remove('show');
+      document.body.style.overflow = '';
+      burger.setAttribute('aria-expanded', 'false');
+      sideMenu.setAttribute('aria-hidden', 'true');
+    });
+  </script>
+
+  <!-- semi-transparent backdrop -->
+  <div id="overlay" class="overlay"></div>
+</body>
+</html>
